@@ -1,6 +1,6 @@
 import html2canvas from "html2canvas";
 
-export class ModernBratGenerator {
+export class BratGenerator {
   constructor() {
     this.isGreenTheme = false;
     this.currentFontSize = 120;
@@ -9,7 +9,6 @@ export class ModernBratGenerator {
     this.initializeElements();
     this.bindEvents();
     this.setupTextFit();
-    this.setPreviewBackground();
     this.render();
   }
 
@@ -47,14 +46,6 @@ export class ModernBratGenerator {
     window.addEventListener("resize", () => {
       setTimeout(() => this.fitText(), 100);
     });
-  }
-
-  setPreviewBackground() {
-    const imageSrc = this.isGreenTheme ? bratDeluxeImage : bratImage;
-    this.memeContainer.style.backgroundImage = `url(${imageSrc})`;
-    this.memeContainer.style.backgroundSize = "cover";
-    this.memeContainer.style.backgroundPosition = "center";
-    this.memeContainer.style.backgroundRepeat = "no-repeat";
   }
 
   updateText() {
@@ -115,6 +106,9 @@ export class ModernBratGenerator {
   }
 
   async createCanvasWithBackground() {
+    const container = this.memeContainer;
+    const containerRect = container.getBoundingClientRect();
+
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
@@ -122,7 +116,7 @@ export class ModernBratGenerator {
     canvas.width = size;
     canvas.height = size;
 
-    const bgColor = "#FFFFFF";
+    const bgColor = this.isGreenTheme ? "#00d4ff" : "#FFFFFF";
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, size, size);
 
@@ -132,14 +126,16 @@ export class ModernBratGenerator {
 
       const imagePromise = new Promise((resolve, reject) => {
         bgImage.onload = resolve;
-        bgImage.onerror = reject;
+        bgImage.onerror = () => resolve();
+        
+        bgImage.src = "../images/brat-deluxe.png";
       });
 
-      bgImage.src = "../images/brat-deluxe.png";
       await imagePromise;
+
       ctx.drawImage(bgImage, 0, 0, size, size);
     } catch (error) {
-      console.warn("Background image failed to load:", error);
+      console.warn("Background image failed to load, using solid color");
     }
 
     const text = this.textOverlay.textContent;
@@ -147,7 +143,7 @@ export class ModernBratGenerator {
     const maxHeight = size - 64;
     const baseFontSize = Math.min(this.currentFontSize, size / 3);
 
-    ctx.fillStyle = this.isGreenTheme ? "#8acf00" : "#000000";
+    ctx.fillStyle = "#000000";
     ctx.textBaseline = "top";
 
     const { fontSize, lines } = this.calculateOptimalFontSize(
@@ -253,6 +249,7 @@ export class ModernBratGenerator {
 
     try {
       const canvas = await this.createCanvasWithBackground();
+
       const quality = Math.max(0.1, 1 - this.friedLevel / 100);
       const dataURL = canvas.toDataURL("image/jpeg", quality);
 
@@ -275,6 +272,7 @@ export class ModernBratGenerator {
 
     try {
       const canvas = await this.createCanvasWithBackground();
+
       const quality = Math.max(0.1, 1 - this.friedLevel / 100);
       const dataURL = canvas.toDataURL("image/jpeg", quality);
 

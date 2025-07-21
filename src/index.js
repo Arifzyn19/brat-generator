@@ -1,11 +1,8 @@
-// Import styles
 import "./styles/main.css";
 
-// Import modules
-import { ModernBratGenerator } from "./js/App.js";
+import { BratGenerator } from "./js/App.js";
 import "./js/textFit.js";
 
-// Theme toggle functionality
 function toggleTheme() {
   const memeContainer = document.getElementById("memeContainer");
   const generator = window.bratGenerator;
@@ -19,7 +16,6 @@ function toggleTheme() {
   }
 }
 
-// Global functions for button events
 function downloadImage() {
   window.bratGenerator.downloadImage();
 }
@@ -28,12 +24,10 @@ function previewImage() {
   window.bratGenerator.previewImage();
 }
 
-// Make functions globally available
 window.toggleTheme = toggleTheme;
 window.downloadImage = downloadImage;
 window.previewImage = previewImage;
 
-// Initialize when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
-  window.bratGenerator = new ModernBratGenerator();
+  window.bratGenerator = new BratGenerator();
 });
