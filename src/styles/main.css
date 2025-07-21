@@ -162,10 +162,6 @@ body {
   box-sizing: border-box;
 }
 
-.meme-container.green-theme {
-  background-image: url("../images/brat.png");
-}
-
 .meme-image {
   position: absolute;
   top: 50%;

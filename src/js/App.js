@@ -150,7 +150,7 @@ export class ModernBratGenerator {
         const imagePath = this.isGreenTheme
           ? "../images/brat.png"
           : "../images/brat-deluxe.png";
-        bgImage.src = imagePath;
+        bgImage.src = "../images/brat-deluxe.png";
       });
 
       await imagePromise;
