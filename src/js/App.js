@@ -147,8 +147,8 @@ export class ModernBratGenerator {
                 
                 // Set image source based on theme
                 const imagePath = this.isGreenTheme ? 
-                    '../images/brat-deluxe.png' : 
-                    '../images/brat.png';
+                    '../images/brat.png' : 
+                    '../images/brat-deluxe.png';
                 bgImage.src = imagePath;
             });
             
