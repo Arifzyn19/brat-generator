@@ -1,4 +1,3 @@
-// Import html2canvas dynamically or use it from global scope
 import html2canvas from "html2canvas";
 
 export class ModernBratGenerator {
@@ -10,6 +9,7 @@ export class ModernBratGenerator {
     this.initializeElements();
     this.bindEvents();
     this.setupTextFit();
+    this.setPreviewBackground();
     this.render();
   }
 
@@ -25,40 +25,42 @@ export class ModernBratGenerator {
   }
 
   bindEvents() {
-    // Text input events
     this.textInput.addEventListener("input", () => {
       this.updateText();
       this.fitText();
     });
 
-    // Font size slider
     this.fontSizeSlider.addEventListener("input", (e) => {
       this.currentFontSize = parseInt(e.target.value);
       this.fontSizeValue.textContent = this.currentFontSize + "px";
       this.fitText();
     });
 
-    // Fried level slider
     this.friedLevelSlider.addEventListener("input", (e) => {
       this.friedLevel = parseInt(e.target.value);
       this.friedValue.textContent = this.friedLevel + "%";
 
-      // Update blur effect in real-time
       const blurAmount = (this.friedLevel / 100) * 3;
       this.textOverlay.style.filter = `blur(${blurAmount}px)`;
     });
 
-    // Auto-resize on window resize
     window.addEventListener("resize", () => {
       setTimeout(() => this.fitText(), 100);
     });
+  }
+
+  setPreviewBackground() {
+    const imageSrc = this.isGreenTheme ? bratDeluxeImage : bratImage;
+    this.memeContainer.style.backgroundImage = `url(${imageSrc})`;
+    this.memeContainer.style.backgroundSize = "cover";
+    this.memeContainer.style.backgroundPosition = "center";
+    this.memeContainer.style.backgroundRepeat = "no-repeat";
   }
 
   updateText() {
     const text = this.textInput.value.toLowerCase() || "brat";
     this.textOverlay.textContent = text;
 
-    // Text mulai dari kiri atas
     this.textOverlay.style.textAlign = "left";
     this.textOverlay.style.display = "block";
     this.textOverlay.style.position = "absolute";
@@ -67,18 +69,15 @@ export class ModernBratGenerator {
     this.textOverlay.style.width = "calc(100% - 4rem)";
     this.textOverlay.style.transform = "none";
 
-    // Apply blur effect based on fried level for preview
     const blurAmount = (this.friedLevel / 100) * 3;
     this.textOverlay.style.filter = `blur(${blurAmount}px)`;
 
-    // Update font family for better brat look
     this.textOverlay.style.fontFamily =
       '"Arial Black", "Helvetica", Arial, Impact, sans-serif';
     this.textOverlay.style.lineHeight = "0.9";
   }
 
   setupTextFit() {
-    // Enhanced text fitting for preview
     this.fitText = () => {
       const container = this.memeContainer;
       const textElement = this.textOverlay;
@@ -87,21 +86,18 @@ export class ModernBratGenerator {
       if (!text || !container) return;
 
       const containerRect = container.getBoundingClientRect();
-      const maxWidth = containerRect.width - 64; // Account for padding
+      const maxWidth = containerRect.width - 64;
       const maxHeight = containerRect.height - 64;
 
-      // Start with current font size and reduce if necessary
       let fontSize = this.currentFontSize;
       textElement.style.fontSize = fontSize + "px";
 
-      // Check if text overflows and reduce font size accordingly
       while (fontSize > 20) {
         textElement.style.fontSize = fontSize + "px";
 
         const textRect = textElement.getBoundingClientRect();
         const textHeight = textElement.scrollHeight;
 
-        // Check if text fits within container bounds
         if (textHeight <= maxHeight && textElement.scrollWidth <= maxWidth) {
           break;
         }
@@ -118,54 +114,42 @@ export class ModernBratGenerator {
     this.fitText();
   }
 
-  // Create canvas with proper background
   async createCanvasWithBackground() {
-    const container = this.memeContainer;
-    const containerRect = container.getBoundingClientRect();
-
-    // Create canvas
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    // Set canvas size to match container
-    const size = 600; // Fixed size for consistency
+    const size = 600;
     canvas.width = size;
     canvas.height = size;
 
-    // Fill background color first
-    const bgColor = this.isGreenTheme ? "#00d4ff" : "#FFFFFF";
+    const bgColor = "#FFFFFF";
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, size, size);
 
-    // Try to load and draw background image
     try {
       const bgImage = new Image();
       bgImage.crossOrigin = "anonymous";
 
       const imagePromise = new Promise((resolve, reject) => {
         bgImage.onload = resolve;
-        bgImage.onerror = () => resolve(); // Continue without image if failed
-        
-        bgImage.src = "../images/brat-deluxe.png";
+        bgImage.onerror = reject;
       });
 
+      bgImage.src = "../images/brat-deluxe.png";
       await imagePromise;
-
       ctx.drawImage(bgImage, 0, 0, size, size);
     } catch (error) {
-      console.warn("Background image failed to load, using solid color");
+      console.warn("Background image failed to load:", error);
     }
 
-    // Draw text with auto-resize and blur effect
     const text = this.textOverlay.textContent;
-    const maxWidth = size - 64; // Padding left/right
-    const maxHeight = size - 64; // Padding top/bottom
+    const maxWidth = size - 64;
+    const maxHeight = size - 64;
     const baseFontSize = Math.min(this.currentFontSize, size / 3);
 
-    ctx.fillStyle = "#000000";
+    ctx.fillStyle = this.isGreenTheme ? "#8acf00" : "#000000";
     ctx.textBaseline = "top";
 
-    // Calculate optimal font size and get wrapped lines
     const { fontSize, lines } = this.calculateOptimalFontSize(
       ctx,
       text,
@@ -174,17 +158,14 @@ export class ModernBratGenerator {
       baseFontSize,
     );
 
-    // Apply blur effect based on fried level
-    const blurAmount = (this.friedLevel / 100) * 3; // Max 3px blur
+    const blurAmount = (this.friedLevel / 100) * 3;
     ctx.filter = `blur(${blurAmount}px)`;
 
-    // Set font with better styling for brat look
     ctx.font = `900 ${fontSize}px "Arial Black", "Helvetica", Arial, Impact, sans-serif`;
 
-    let y = 32; // Start from top with padding
-    const lineHeight = fontSize * 0.9; // Slightly tighter line spacing
+    let y = 32;
+    const lineHeight = fontSize * 0.9;
 
-    // Add multiple shadows for better effect
     ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
     ctx.shadowBlur = 2;
     ctx.shadowOffsetX = 1;
@@ -195,19 +176,16 @@ export class ModernBratGenerator {
       y += lineHeight;
     });
 
-    // Reset filter and shadow
     ctx.filter = "none";
     ctx.shadowColor = "transparent";
 
     return canvas;
   }
 
-  // Helper function to calculate optimal font size
   calculateOptimalFontSize(ctx, text, maxWidth, maxHeight, baseFontSize) {
     let fontSize = baseFontSize;
     let lines = [];
 
-    // Start with base font size and reduce until text fits
     for (let size = fontSize; size >= 20; size -= 5) {
       ctx.font = `900 ${size}px ArialNarrow, Arial, Impact, sans-serif`;
       lines = this.wrapText(ctx, text, maxWidth);
@@ -224,18 +202,15 @@ export class ModernBratGenerator {
     return { fontSize, lines };
   }
 
-  // Helper function to wrap text
   wrapText(ctx, text, maxWidth) {
     const words = text.split(" ");
     const lines = [];
 
     if (words.length === 1) {
-      // Single word - check if it fits
       const width = ctx.measureText(text).width;
       if (width <= maxWidth) {
         lines.push(text);
       } else {
-        // Break long single word into characters if needed
         let currentLine = "";
         for (const char of text) {
           const testLine = currentLine + char;
@@ -271,21 +246,16 @@ export class ModernBratGenerator {
     return lines;
   }
 
-  // Download image functionality - Fixed version
   async downloadImage() {
     const button = event.target;
     button.classList.add("loading");
     button.textContent = "Generating...";
 
     try {
-      // Create canvas with proper background
       const canvas = await this.createCanvasWithBackground();
-
-      // Apply fried effect by adjusting quality
       const quality = Math.max(0.1, 1 - this.friedLevel / 100);
       const dataURL = canvas.toDataURL("image/jpeg", quality);
 
-      // Create download link
       const link = document.createElement("a");
       link.href = dataURL;
       link.download = `brat-${Date.now()}.jpg`;
@@ -298,21 +268,16 @@ export class ModernBratGenerator {
     }
   }
 
-  // Preview image functionality - Fixed version
   async previewImage() {
     const button = event.target;
     button.classList.add("loading");
     button.textContent = "Previewing...";
 
     try {
-      // Create canvas with proper background
       const canvas = await this.createCanvasWithBackground();
-
-      // Apply fried effect by adjusting quality
       const quality = Math.max(0.1, 1 - this.friedLevel / 100);
       const dataURL = canvas.toDataURL("image/jpeg", quality);
 
-      // Show in new window
       const newWindow = window.open("about:blank");
       const img = newWindow.document.createElement("img");
       img.src = dataURL;
