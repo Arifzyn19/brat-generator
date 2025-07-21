@@ -107,7 +107,6 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 👤 Author
 
-**Arifzyn19**
 - GitHub: [@Arifzyn19](https://github.com/Arifzyn19)
 - Project Link: [https://github.com/Arifzyn19/brat-generator](https://github.com/Arifzyn19/brat-generator)
 
@@ -118,4 +117,4 @@ This project is open source and available under the [MIT License](LICENSE).
 - JavaScript and CSS best practices
 ---
 
-*Made with ❤️ by Arifzyn19* 
+*Made with ❤️* 
