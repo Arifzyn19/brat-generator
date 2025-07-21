@@ -133,7 +133,7 @@ export class ModernBratGenerator {
     canvas.height = size;
 
     // Fill background color first
-    const bgColor = this.isGreenTheme ? "#00d4ff" : "#8acf00";
+    const bgColor = this.isGreenTheme ? "#00d4ff" : "#FFFFFF";
     ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, size, size);
 
@@ -145,11 +145,7 @@ export class ModernBratGenerator {
       const imagePromise = new Promise((resolve, reject) => {
         bgImage.onload = resolve;
         bgImage.onerror = () => resolve(); // Continue without image if failed
-
-        // Set image source based on theme
-        const imagePath = this.isGreenTheme
-          ? "../images/brat.png"
-          : "../images/brat-deluxe.png";
+        
         bgImage.src = "../images/brat-deluxe.png";
       });
 
