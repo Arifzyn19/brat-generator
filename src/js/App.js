@@ -3,8 +3,10 @@ import html2canvas from "html2canvas";
 export class BratGenerator {
   constructor() {
     this.isGreenTheme = false;
-    this.currentFontSize = 120;
+    this.currentFontSize = 200;
     this.friedLevel = 80;
+    
+    this.fontFamily = '"Archivo Narrow", Arial, sans-serif';
 
     this.initializeElements();
     this.bindEvents();
@@ -62,9 +64,9 @@ export class BratGenerator {
 
     const blurAmount = (this.friedLevel / 100) * 3;
     this.textOverlay.style.filter = `blur(${blurAmount}px)`;
-
-    this.textOverlay.style.fontFamily =
-      '"Arial Black", "Helvetica", Arial, Impact, sans-serif';
+    
+    this.textOverlay.style.fontFamily = this.fontFamily;
+    this.textOverlay.style.fontWeight = "900";
     this.textOverlay.style.lineHeight = "0.9";
   }
 
@@ -82,6 +84,7 @@ export class BratGenerator {
 
       let fontSize = this.currentFontSize;
       textElement.style.fontSize = fontSize + "px";
+      textElement.style.fontWeight = "900";
 
       while (fontSize > 20) {
         textElement.style.fontSize = fontSize + "px";
@@ -157,7 +160,8 @@ export class BratGenerator {
     const blurAmount = (this.friedLevel / 100) * 3;
     ctx.filter = `blur(${blurAmount}px)`;
 
-    ctx.font = `900 ${fontSize}px "Arial Black", "Helvetica", Arial, Impact, sans-serif`;
+    // Gunakan font family yang sama dengan tampilan
+    ctx.font = `900 ${fontSize}px ${this.fontFamily}`;
 
     let y = 32;
     const lineHeight = fontSize * 0.9;
@@ -183,7 +187,8 @@ export class BratGenerator {
     let lines = [];
 
     for (let size = fontSize; size >= 20; size -= 5) {
-      ctx.font = `900 ${size}px ArialNarrow, Arial, Impact, sans-serif`;
+      // Gunakan font family yang konsisten
+      ctx.font = `900 ${size}px ${this.fontFamily}`;
       lines = this.wrapText(ctx, text, maxWidth);
 
       const lineHeight = size * 0.85;
