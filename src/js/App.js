@@ -84,7 +84,7 @@ export class BratGenerator {
 
       let fontSize = this.currentFontSize;
       textElement.style.fontSize = fontSize + "px";
-      textElement.style.fontWeight = "900";
+      textElement.style.fontWeight = "200";
 
       while (fontSize > 20) {
         textElement.style.fontSize = fontSize + "px";
